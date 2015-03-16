@@ -2,6 +2,8 @@ package com.tengchao.cse523.controller;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,8 @@ public class CommonController {
 	
 	private BaseService baseService;
 	
+	private final static Logger LOGGER = LogManager.getLogger(CommonController.class);
+	
 	public void setBaseService(BaseService baseService){
 		this.baseService = baseService;
 	}
@@ -34,11 +38,14 @@ public class CommonController {
 	@ResponseBody
 	public ResponseEntity<Person> getPersonInfo(
 			@RequestParam(value = "pid", required = true) int pid){
+		
+		LOGGER.entry();
 		Person person = baseService.getPersonInfo(pid);
 		HttpStatus responseCode = HttpStatus.OK;
 		if (null == person){
 			responseCode = HttpStatus.BAD_REQUEST;
 		}
+		LOGGER.exit();
 		return new ResponseEntity<Person>(person, responseCode);
 	}
 	

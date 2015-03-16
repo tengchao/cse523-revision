@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -19,6 +21,8 @@ import com.tengchao.cse523.dto.mapper.PersonRowMapper;
 public class BaseDao {
 
 	private JdbcTemplate jdbcTemplate;
+	
+	private final static Logger LOGGER = LogManager.getLogger(BaseDao.class);
 	
 	public void setDataSource(DataSource dataSource){
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -33,7 +37,9 @@ public class BaseDao {
 			}
 		};
 		List<Person> people = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter, new PersonRowMapper());
+		
 		if (people.size() > 0){
+			LOGGER.debug("find person: " + people.get(0));
 			return people.get(0);
 		}
 		return null;
