@@ -1,5 +1,7 @@
 package com.tengchao.cse523.controller;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.jdbc.StringUtils;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.service.BaseService;
@@ -40,19 +46,18 @@ public class CommonController {
 	public ResponseEntity<Person> getPersonInfo(
 			@RequestParam(value = "pid", required = true) int pid){
 		
-		LOGGER.entry();
 		HttpStatus responseCode = HttpStatus.OK;
 		Person person = null;
 		try {
 			person = baseService.getPersonInfo(pid);
 			if (null == person){
-				responseCode = HttpStatus.BAD_REQUEST;
+				responseCode = HttpStatus.NOT_FOUND;
+				LOGGER.error("not find the person with pid:  " + pid);
 			}
 		} catch (JsonProcessingException e) {
 			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
-			e.printStackTrace();
+			LOGGER.error("JSON exception when getting person info with pid:" + pid);
 		}
-		LOGGER.exit();
 		return new ResponseEntity<Person>(person, responseCode);
 	}
 	
@@ -68,7 +73,40 @@ public class CommonController {
 	public ResponseEntity<Map<String, Integer>> updatePersonInfo(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestBody String requestPayload){
-		return null;
+		Map<String, Integer> response = new HashMap<String, Integer>();
+		HttpStatus responseCode = HttpStatus.OK;
+		if (StringUtils.isNullOrEmpty(requestPayload)){
+			LOGGER.error("request payload is null or empty");
+			responseCode = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<Map<String, Integer>>(response, responseCode);
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		Person newPerson = null;
+		try {
+			newPerson = mapper.readValue(requestPayload, Person.class);
+			int personId = baseService.updatePersonInfo(newPerson);
+			
+			if (personId < 0){
+				responseCode = HttpStatus.BAD_REQUEST;
+				LOGGER.error("cannot find the appropriate person to update with payload: " + requestPayload);
+				return new ResponseEntity<Map<String,Integer>>(response, responseCode);
+			}
+			
+			response.put("pid", personId);
+			
+		} catch (JsonParseException e) {
+			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+			LOGGER.error("JsonParseException when updating person info with payload: " + requestPayload);
+		} catch (JsonMappingException e) {
+			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+			LOGGER.error("JsonMappingException when updating person info with payload: " + requestPayload);
+		} catch (IOException e) {
+			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+			LOGGER.error("IOException when updating person info with payload: " + requestPayload);
+		}
+		
+		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
 	
 	/**

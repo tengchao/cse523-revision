@@ -11,6 +11,8 @@ public class Person implements Serializable{
 	private String email;
 	private String role;
 	private Timestamp lastLoginTime;
+	private String password;
+	
 	public int getPid() {
 		return pid;
 	}
@@ -46,6 +48,12 @@ public class Person implements Serializable{
 	}
 	public void setLastLoginTime(Timestamp lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 	

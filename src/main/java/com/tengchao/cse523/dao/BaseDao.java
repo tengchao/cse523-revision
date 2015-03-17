@@ -3,6 +3,7 @@ package com.tengchao.cse523.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.dto.mapper.PersonRowMapper;
+import com.tengchao.cse523.util.QueryUtil;
 
 public class BaseDao {
 
@@ -33,13 +35,20 @@ public class BaseDao {
 	}
 	
 	public Person getPersonInfo(final int pid) throws JsonProcessingException{
-		final StringBuilder sqlBuilder = new StringBuilder("select * from people where pid = ?");
+		final StringBuilder sqlBuilder = new StringBuilder("select * from `people` where `pid` = ?");
 		
 		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {		
+			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, pid);
 			}
 		};
+		if (LOGGER.isDebugEnabled()){
+			List<Object> params = new ArrayList<Object>();
+			params.add(pid);
+			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			LOGGER.debug(query);
+		}
 		List<Person> people = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter, new PersonRowMapper());
 		
 		if (people.size() > 0){
@@ -52,8 +61,39 @@ public class BaseDao {
 		return null;
 	}
 	
-	public int updatePersonInfo(Person person){
-		return 0;	
+	public int updatePersonInfo(final Person person){
+		final StringBuilder sqlBuilder = new StringBuilder("UPDATE `people` SET `firstname`=?, "
+				+ "`lastname`=?, `email`=?, `role`=?, `last_login_time`=?, `password`=? WHERE pid=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter(){
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, person.getFirstName());
+				ps.setString(2, person.getLastName());
+				ps.setString(3, person.getEmail());
+				ps.setString(4, person.getRole());
+				ps.setTimestamp(5, person.getLastLoginTime());
+				ps.setString(6, person.getPassword());
+				ps.setInt(7, person.getPid());
+			}
+		};
+		if (LOGGER.isDebugEnabled()){
+			List<Object> params = new ArrayList<Object>();
+			params.add(person.getFirstName());
+			params.add(person.getLastName());
+			params.add(person.getEmail());
+			params.add(person.getRole());
+			params.add(person.getLastLoginTime());
+			params.add(person.getPassword());
+			params.add(person.getPid());
+			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			LOGGER.debug("update person: " + query);
+		}
+		int rows = jdbcTemplate.update(sqlBuilder.toString(), setter);
+		if (0 == rows){
+			LOGGER.error("update person info failure");
+			return -1;
+		}
+		return person.getPid();	
 	}
 	
 	public CourseDashboard getDashboard(int pid, String semester){

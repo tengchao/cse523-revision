@@ -27,9 +27,9 @@ public class BaseServiceImpl implements BaseService {
 		return null;
 	}
 
-	public int updatePersonInfo(Person p) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int updatePersonInfo(Person person) {
+		int pid = baseDao.updatePersonInfo(person);
+		return pid;
 	}
 
 }
