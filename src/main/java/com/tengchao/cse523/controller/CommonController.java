@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.service.BaseService;
@@ -40,10 +41,16 @@ public class CommonController {
 			@RequestParam(value = "pid", required = true) int pid){
 		
 		LOGGER.entry();
-		Person person = baseService.getPersonInfo(pid);
 		HttpStatus responseCode = HttpStatus.OK;
-		if (null == person){
-			responseCode = HttpStatus.BAD_REQUEST;
+		Person person = null;
+		try {
+			person = baseService.getPersonInfo(pid);
+			if (null == person){
+				responseCode = HttpStatus.BAD_REQUEST;
+			}
+		} catch (JsonProcessingException e) {
+			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		LOGGER.exit();
 		return new ResponseEntity<Person>(person, responseCode);

@@ -14,6 +14,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.dto.mapper.PersonRowMapper;
@@ -28,7 +32,7 @@ public class BaseDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
-	public Person getPersonInfo(final int pid){
+	public Person getPersonInfo(final int pid) throws JsonProcessingException{
 		final StringBuilder sqlBuilder = new StringBuilder("select * from people where pid = ?");
 		
 		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {		
@@ -39,7 +43,10 @@ public class BaseDao {
 		List<Person> people = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter, new PersonRowMapper());
 		
 		if (people.size() > 0){
-			LOGGER.debug("find person: " + people.get(0));
+			Person person = people.get(0);
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonStr = mapper.writeValueAsString(person);
+			LOGGER.debug("find person: " + jsonStr);
 			return people.get(0);
 		}
 		return null;
