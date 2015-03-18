@@ -121,7 +121,13 @@ public class CommonController {
 	public ResponseEntity<CourseDashboard> getSemesterCourses(
 			@PathVariable("semester") String semester,
 			@RequestParam(value = "pid", required = true) int pid){
-		return null;
+		CourseDashboard dashboard = null;
+		HttpStatus responseCode = HttpStatus.ACCEPTED;
+		dashboard = baseService.getCourseDashboard(pid, semester);
+		if (0 == dashboard.getCourses().size()){
+			responseCode = HttpStatus.NOT_FOUND;
+		}
+		return new ResponseEntity<CourseDashboard>(dashboard, responseCode);
 	}
 	
 }

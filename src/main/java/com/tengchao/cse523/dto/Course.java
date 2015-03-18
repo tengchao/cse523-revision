@@ -7,6 +7,9 @@ public class Course implements Serializable{
 	private int courseId;
 	private String nickId;	// such as CSE114
 	private String courseName;
+	private int seats;
+	private int availableSeats;
+	private String semester;
 	
 	public int getCourseId() {
 		return courseId;
@@ -44,10 +47,6 @@ public class Course implements Serializable{
 	public void setSemester(String semester) {
 		this.semester = semester;
 	}
-	private int seats;
-	private int availableSeats;
-	private String semester;
-	
 	
 	
 

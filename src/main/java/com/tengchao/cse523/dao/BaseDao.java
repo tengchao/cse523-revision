@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
+import com.tengchao.cse523.dto.PersonCourseRelation;
+import com.tengchao.cse523.dto.mapper.PersonCourseRelationMapper;
 import com.tengchao.cse523.dto.mapper.PersonRowMapper;
 import com.tengchao.cse523.util.QueryUtil;
 
@@ -53,10 +55,12 @@ public class BaseDao {
 		
 		if (people.size() > 0){
 			Person person = people.get(0);
-			ObjectMapper mapper = new ObjectMapper();
-			String jsonStr = mapper.writeValueAsString(person);
-			LOGGER.debug("find person: " + jsonStr);
-			return people.get(0);
+			if (LOGGER.isDebugEnabled()){
+				ObjectMapper mapper = new ObjectMapper();
+				String jsonStr = mapper.writeValueAsString(person);
+				LOGGER.debug("find person: " + jsonStr);
+			}
+			return person;
 		}
 		return null;
 	}
@@ -96,8 +100,24 @@ public class BaseDao {
 		return person.getPid();	
 	}
 	
-	public CourseDashboard getDashboard(int pid, String semester){
-		return null;
+	public List<PersonCourseRelation> getCoursesForPersonSemester(final int pid, final String semester){
+		final StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `people_courses` where `pid`=? and `semester`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, pid);
+				ps.setString(2, semester);
+			}
+		};
+		if (LOGGER.isDebugEnabled()){
+			List<Object> params = new ArrayList<Object>();
+			params.add(pid);
+			params.add(semester);
+			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			LOGGER.debug("get course dashboard: " + query);
+		}
+		List<PersonCourseRelation> relations = jdbcTemplate.query(sqlBuilder.toString(), setter, new PersonCourseRelationMapper());
+		return relations;
 	}
 	
 	public List<Person> getFacultiesInCourse(int cid){
