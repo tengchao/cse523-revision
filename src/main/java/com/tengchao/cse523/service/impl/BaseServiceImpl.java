@@ -1,8 +1,10 @@
 package com.tengchao.cse523.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -46,20 +48,23 @@ public class BaseServiceImpl implements BaseService {
 		 dashboard.setSemester(semester);
 		 Set<Integer> cidSet = new HashSet<Integer>();
 		 List<Course> courses = new ArrayList<Course>();
+		 Map<Integer, String> roleMap = new HashMap<Integer, String>();
 		 for (PersonCourseRelation relation : relations){
 			 int cid = relation.getCid();
 			 if (cidSet.contains(cid)){
 				 continue;
 			 }
 			 Course course = new Course();
-			 course.setCourseId(relation.getCid());
+			 course.setCourseId(cid);
 			 course.setNickId(relation.getNickId());
 			 course.setCourseName(relation.getCname());
 			 courses.add(course);
+			 roleMap.put(cid, relation.getRole());
 			 cidSet.add(course.getCourseId());
 			 LOGGER.debug("fetch course: " + course);
 		 }
 		 dashboard.setCourses(courses);
+		 dashboard.setRoleMap(roleMap);
 		 return dashboard;
 	}
 }
