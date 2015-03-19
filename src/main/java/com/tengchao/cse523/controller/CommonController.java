@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.jdbc.StringUtils;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
+import com.tengchao.cse523.exception.DataNotFoundException;
 import com.tengchao.cse523.service.BaseService;
 
 @RestController
@@ -50,10 +51,6 @@ public class CommonController {
 		Person person = null;
 		try {
 			person = baseService.getPersonInfo(pid);
-			if (null == person){
-				responseCode = HttpStatus.NOT_FOUND;
-				LOGGER.error("not find the person with pid:  " + pid);
-			}
 		} catch (JsonProcessingException e) {
 			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
 			LOGGER.error("JSON exception when getting person info with pid:" + pid);

@@ -16,6 +16,7 @@ import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.dto.PersonCourseRelation;
+import com.tengchao.cse523.exception.DataNotFoundException;
 import com.tengchao.cse523.service.BaseService;
 
 public class BaseServiceImpl implements BaseService {
@@ -29,7 +30,12 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	public Person getPersonInfo(int pid) throws JsonProcessingException {
-		return baseDao.getPersonInfo(pid);
+		Person person = baseDao.getPersonInfo(pid);
+		if (null == person){
+			LOGGER.error("not find the person with pid:  " + pid);
+			throw new DataNotFoundException("not find the person with pid:  " + pid);
+		}
+		return person;
 	}
 
 	public Person getPersonInfo(int pid, String password) {
