@@ -1,11 +1,15 @@
 package com.tengchao.cse523.exception;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tengchao.cse523.dto.ErrorResponse;
 
 /**
@@ -30,5 +34,28 @@ public class GenericExceptionHandler {
 		return new ErrorResponse(e.getMessage());
 	}
 	
+	@ExceptionHandler(BadRequestException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public @ResponseBody ErrorResponse badRequest(BadRequestException e){
+		return new ErrorResponse(e.getMessage());
+	}
+	
+	@ExceptionHandler(JsonParseException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ErrorResponse jsonParseError(JsonParseException e){
+		return new ErrorResponse(e.getMessage());
+	}
+	
+	@ExceptionHandler(JsonMappingException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ErrorResponse jsonMappingError(JsonMappingException e){
+		return new ErrorResponse(e.getMessage());
+	}
+	
+	@ExceptionHandler(IOException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ErrorResponse ioError(IOException e){
+		return new ErrorResponse(e.getMessage());
+	}
 	
 }

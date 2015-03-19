@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.jdbc.StringUtils;
 import com.tengchao.cse523.dto.CourseDashboard;
 import com.tengchao.cse523.dto.Person;
+import com.tengchao.cse523.exception.BadRequestException;
 import com.tengchao.cse523.exception.DataNotFoundException;
 import com.tengchao.cse523.service.BaseService;
 
@@ -41,20 +42,17 @@ public class CommonController {
 	 * get person info
 	 * @param pid
 	 * @return
+	 * @throws JsonProcessingException 
 	 */
 	@RequestMapping(value = "/personInfo", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Person> getPersonInfo(
-			@RequestParam(value = "pid", required = true) int pid){
+			@RequestParam(value = "pid", required = true) int pid) 
+					throws JsonProcessingException{
 		
 		HttpStatus responseCode = HttpStatus.OK;
 		Person person = null;
-		try {
-			person = baseService.getPersonInfo(pid);
-		} catch (JsonProcessingException e) {
-			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
-			LOGGER.error("JSON exception when getting person info with pid:" + pid);
-		}
+		person = baseService.getPersonInfo(pid);
 		return new ResponseEntity<Person>(person, responseCode);
 	}
 	
@@ -64,44 +62,34 @@ public class CommonController {
 	 * @param pid
 	 * @param requestPayload
 	 * @return {pid : <id>}
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
 	@RequestMapping(value = "/personInfo", method = RequestMethod.PUT)
 	@ResponseBody
 	public ResponseEntity<Map<String, Integer>> updatePersonInfo(
 			@RequestParam(value = "pid", required = true) int pid,
-			@RequestBody String requestPayload){
+			@RequestBody String requestPayload) 
+					throws JsonParseException, JsonMappingException, IOException{
 		Map<String, Integer> response = new HashMap<String, Integer>();
 		HttpStatus responseCode = HttpStatus.OK;
 		if (StringUtils.isNullOrEmpty(requestPayload)){
 			LOGGER.error("request payload is null or empty");
-			responseCode = HttpStatus.BAD_REQUEST;
-			return new ResponseEntity<Map<String, Integer>>(response, responseCode);
+			throw new BadRequestException("request payload is null or empty");
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
 		Person newPerson = null;
-		try {
-			newPerson = mapper.readValue(requestPayload, Person.class);
-			int personId = baseService.updatePersonInfo(newPerson);
-			
-			if (personId < 0){
-				responseCode = HttpStatus.BAD_REQUEST;
-				LOGGER.error("cannot find the appropriate person to update with payload: " + requestPayload);
-				return new ResponseEntity<Map<String,Integer>>(response, responseCode);
-			}
-			
-			response.put("pid", personId);
-			
-		} catch (JsonParseException e) {
-			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
-			LOGGER.error("JsonParseException when updating person info with payload: " + requestPayload);
-		} catch (JsonMappingException e) {
-			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
-			LOGGER.error("JsonMappingException when updating person info with payload: " + requestPayload);
-		} catch (IOException e) {
-			responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
-			LOGGER.error("IOException when updating person info with payload: " + requestPayload);
+		newPerson = mapper.readValue(requestPayload, Person.class);
+		int personId = baseService.updatePersonInfo(newPerson);
+		
+		if (personId < 0){
+			LOGGER.error("cannot find the appropriate person to update with payload: " + requestPayload);
+			throw new BadRequestException("bad request with payload: " + requestPayload);
 		}
+		
+		response.put("pid", personId);
 		
 		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
@@ -122,7 +110,7 @@ public class CommonController {
 		HttpStatus responseCode = HttpStatus.ACCEPTED;
 		dashboard = baseService.getCourseDashboard(pid, semester);
 		if (0 == dashboard.getCourses().size()){
-			responseCode = HttpStatus.NOT_FOUND;
+			throw new DataNotFoundException("cannot find any courses in semester: " + semester);
 		}
 		return new ResponseEntity<CourseDashboard>(dashboard, responseCode);
 	}
