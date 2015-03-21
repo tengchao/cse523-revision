@@ -65,4 +65,15 @@ ADD CONSTRAINT `fk_pc_cid`
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 
+  ALTER TABLE `cse523_revision`.`people` 
+  ADD INDEX `idx_p_role` (`role` ASC);
 
+ALTER TABLE `cse523_revision`.`courses` 
+  ADD INDEX `idx_c_professorId_semester` (`professorId` ASC, `semester` ASC);
+
+ALTER TABLE `cse523_revision`.`people_courses` 
+  ADD INDEX `idx_pc_semester` (`semester` ASC),
+  ADD INDEX `idx_pc_cid_section` (`cid` ASC, `section` ASC),
+  ADD INDEX `idx_pc_cid_section_role` (`cid` ASC, `section` ASC, `role` ASC),
+  ADD INDEX `idx_pc_pid` (`pid` ASC),
+  ADD INDEX `idx_pc_pid_semester` (`pid` ASC, `semester` ASC);
