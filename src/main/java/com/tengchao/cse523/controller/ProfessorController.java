@@ -19,7 +19,7 @@ public class ProfessorController {
 	 * @param cid
 	 * @return
 	 */
-	@RequestMapping(value = "/professor/{semester}/course", method = RequestMethod.GET)
+	@RequestMapping(value = "/professor/{semester}/course", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> getCourseRecords(
 			@RequestParam(value = "pid", required = true) int pid,
