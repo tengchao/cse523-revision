@@ -14,12 +14,11 @@ public class PersonCourseRelationMapper implements RowMapper<PersonCourseRelatio
 			throws SQLException {
 		PersonCourseRelation relation = new PersonCourseRelation();
 		relation.setPid(rs.getInt("pid"));
-		relation.setRole(rs.getString("role"));
 		relation.setCid(rs.getInt("cid"));
+		relation.setSection(rs.getInt("section"));
+		relation.setRole(rs.getString("role"));
 		relation.setNickId(rs.getString("nickId"));
 		relation.setCname(rs.getString("cname"));
-		relation.setSemester(rs.getString("semester"));
-		relation.setSection(rs.getInt("section"));
 		return relation;
 	}
 

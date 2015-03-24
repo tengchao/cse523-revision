@@ -5,12 +5,11 @@ import java.io.Serializable;
 public class PersonCourseRelation implements Serializable{
 
 	private int pid;
-	private String role;
 	private int cid;
+	private int section;
+	private String role;
 	private String nickId;
 	private String cname;
-	private String semester;
-	private int section;
 	
 	public int getPid() {
 		return pid;
@@ -18,17 +17,23 @@ public class PersonCourseRelation implements Serializable{
 	public void setPid(int pid) {
 		this.pid = pid;
 	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
 	public int getCid() {
 		return cid;
 	}
 	public void setCid(int cid) {
 		this.cid = cid;
+	}
+	public int getSection() {
+		return section;
+	}
+	public void setSection(int section) {
+		this.section = section;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 	public String getNickId() {
 		return nickId;
@@ -42,18 +47,5 @@ public class PersonCourseRelation implements Serializable{
 	public void setCname(String cname) {
 		this.cname = cname;
 	}
-	public String getSemester() {
-		return semester;
-	}
-	public void setSemester(String semester) {
-		this.semester = semester;
-	}
-	public int getSection() {
-		return section;
-	}
-	public void setSection(int section) {
-		this.section = section;
-	}
-	
 	
 }

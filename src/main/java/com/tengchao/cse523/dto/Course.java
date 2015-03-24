@@ -7,10 +7,12 @@ public class Course implements Serializable{
 	private int courseId;
 	private String nickId;	// such as CSE114
 	private String courseName;
-	private int seats;
-	private int availableSeats;
 	private String semester;
-	
+	private int professorId;
+	private String professorName;
+	private String gradeRange;
+	private String percentageFlag;
+	private String categories;
 	public int getCourseId() {
 		return courseId;
 	}
@@ -29,25 +31,41 @@ public class Course implements Serializable{
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
 	}
-	public int getSeats() {
-		return seats;
-	}
-	public void setSeats(int seats) {
-		this.seats = seats;
-	}
-	public int getAvailableSeats() {
-		return availableSeats;
-	}
-	public void setAvailableSeats(int availableSeats) {
-		this.availableSeats = availableSeats;
-	}
 	public String getSemester() {
 		return semester;
 	}
 	public void setSemester(String semester) {
 		this.semester = semester;
 	}
+	public int getProfessorId() {
+		return professorId;
+	}
+	public void setProfessorId(int professorId) {
+		this.professorId = professorId;
+	}
+	public String getProfessorName() {
+		return professorName;
+	}
+	public void setProfessorName(String professorName) {
+		this.professorName = professorName;
+	}
+	public String getGradeRange() {
+		return gradeRange;
+	}
+	public void setGradeRange(String gradeRange) {
+		this.gradeRange = gradeRange;
+	}
+	public String getPercentageFlag() {
+		return percentageFlag;
+	}
+	public void setPercentageFlag(String percentageFlag) {
+		this.percentageFlag = percentageFlag;
+	}
+	public String getCategories() {
+		return categories;
+	}
+	public void setCategories(String categories) {
+		this.categories = categories;
+	}
 	
-	
-
 }
