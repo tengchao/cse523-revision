@@ -26,5 +26,9 @@
 	<bean id="baseDao" class="com.tengchao.cse523.dao.BaseDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="studentDao" class="com.tengchao.cse523.dao.StudentDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 </beans>

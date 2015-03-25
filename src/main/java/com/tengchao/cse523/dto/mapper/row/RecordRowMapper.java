@@ -1,4 +1,4 @@
-package com.tengchao.cse523.dto.mapper;
+package com.tengchao.cse523.dto.mapper.row;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ public class RecordRowMapper implements RowMapper<Record>{
 		record.setExpectation(rs.getString("expectation"));
 		record.setScore(rs.getDouble("score"));
 		record.setGrade(rs.getString("grade"));
-		return null;
+		return record;
 	}
 
 }

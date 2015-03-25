@@ -15,10 +15,10 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tengchao.cse523.dto.Record;
-import com.tengchao.cse523.dto.mapper.RecordRowMapper;
+import com.tengchao.cse523.dto.mapper.row.RecordRowMapper;
 import com.tengchao.cse523.util.QueryUtil;
 
-public class StudentDao {
+public class StudentDao{
 
 	private JdbcTemplate jdbcTemplate;
 	private static final Logger LOGGER = LogManager.getLogger(StudentDao.class);
@@ -54,6 +54,7 @@ public class StudentDao {
 				String jsonStr = mapper.writeValueAsString(record);
 				LOGGER.debug("find record: " + jsonStr);
 			}
+			return record;
 		}
 		return null;
 	}

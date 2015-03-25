@@ -1,4 +1,4 @@
-package com.tengchao.cse523.dto.mapper;
+package com.tengchao.cse523.dto.mapper.row;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.tengchao.cse523.dto.PersonCourseRelation;
 
-public class PersonCourseRelationMapper implements RowMapper<PersonCourseRelation>{
+public class PersonCourseRelationRowMapper implements RowMapper<PersonCourseRelation>{
 
 	@Override
 	public PersonCourseRelation mapRow(ResultSet rs, int rowNum)

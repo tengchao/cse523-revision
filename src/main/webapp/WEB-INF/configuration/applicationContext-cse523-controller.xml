@@ -16,4 +16,8 @@
 	<bean id="commonController" class="com.tengchao.cse523.controller.CommonController">
 		<property name="baseService" ref="baseService" />
 	</bean>
+	
+	<bean id="studentController" class="com.tengchao.cse523.controller.StudentController">
+		<property name="studentService" ref="studentService" />
+	</bean>
 </beans>

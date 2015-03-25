@@ -1,4 +1,4 @@
-package com.tengchao.cse523.dto.mapper;
+package com.tengchao.cse523.dto.mapper.row;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

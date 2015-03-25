@@ -1,7 +1,6 @@
 package com.tengchao.cse523.dao;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,20 +9,17 @@ import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.ResultSetExtractor;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.tengchao.cse523.dto.CourseDashboard;
+import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.dto.PersonCourseRelation;
-import com.tengchao.cse523.dto.mapper.PersonCourseRelationMapper;
-import com.tengchao.cse523.dto.mapper.PersonRowMapper;
+import com.tengchao.cse523.dto.mapper.CourseMapper;
+import com.tengchao.cse523.dto.mapper.PersonMapper;
+import com.tengchao.cse523.dto.mapper.row.PersonCourseRelationRowMapper;
 import com.tengchao.cse523.util.QueryUtil;
 
 public class BaseDao {
@@ -39,8 +35,7 @@ public class BaseDao {
 	public Person getPersonInfo(final int pid) throws JsonProcessingException{
 		final StringBuilder sqlBuilder = new StringBuilder("select * from `people` where `pid` = ?");
 		
-		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {		
-			@Override
+		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, pid);
 			}
@@ -51,18 +46,13 @@ public class BaseDao {
 			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
 			LOGGER.debug(query);
 		}
-		List<Person> people = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter, new PersonRowMapper());
-		
-		if (people.size() > 0){
-			Person person = people.get(0);
-			if (LOGGER.isDebugEnabled()){
-				ObjectMapper mapper = new ObjectMapper();
-				String jsonStr = mapper.writeValueAsString(person);
-				LOGGER.debug("find person: " + jsonStr);
-			}
-			return person;
+		Person person = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter, new PersonMapper());
+		if (LOGGER.isDebugEnabled()){
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonStr = mapper.writeValueAsString(person);
+			LOGGER.debug("find person: " + jsonStr);
 		}
-		return null;
+		return person;
 	}
 	
 	public int updatePersonInfo(final Person person){
@@ -116,15 +106,26 @@ public class BaseDao {
 			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
 			LOGGER.debug("get course dashboard: " + query);
 		}
-		List<PersonCourseRelation> relations = jdbcTemplate.query(sqlBuilder.toString(), setter, new PersonCourseRelationMapper());
+		List<PersonCourseRelation> relations = jdbcTemplate.query(sqlBuilder.toString(), setter, new PersonCourseRelationRowMapper());
 		return relations;
 	}
 	
-	public List<Person> getFacultiesInCourse(int cid){
-		return null;
-	}
-	
-	public List<Person> getTAsInCourse(int cid){
-		return null;
+	public Course getCourseBasic(final String semester, final int cid){
+		final StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `courses` where `cid`=? and `semester`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, cid);
+				ps.setString(2, semester);
+			}
+		};
+		if (LOGGER.isDebugEnabled()){
+			List<Object> params = new ArrayList<Object>();
+			params.add(cid);
+			params.add(semester);
+			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			LOGGER.debug(query);
+		}
+		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter, new CourseMapper());
+		return course;
 	}
 }

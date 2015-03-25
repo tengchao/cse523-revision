@@ -9,4 +9,9 @@
 	<bean id="baseService" class="com.tengchao.cse523.service.impl.BaseServiceImpl">
 		<property name="baseDao" ref="baseDao" />
 	</bean>
+	
+	<bean id="studentService" class="com.tengchao.cse523.service.impl.StudentServiceImpl">
+		<property name="studentDao" ref="studentDao" />
+		<property name="baseDao" ref="baseDao" />
+	</bean>
 </beans>
