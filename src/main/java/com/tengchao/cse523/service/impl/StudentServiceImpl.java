@@ -37,4 +37,11 @@ public class StudentServiceImpl implements StudentService {
 		return details;
 	}
 
+	@Override
+	public int setExpectation(String semester, int pid, int cid, int section,
+			String expectation) {
+		int personId = studentDao.setException(pid, cid, section, semester, expectation, "s");
+		return personId;
+	}
+
 }

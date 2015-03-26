@@ -30,6 +30,7 @@ public class StudentDao{
 	public Record getRecord(final int pid, final int cid, final int section, final String role) throws JsonProcessingException{
 		final StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `people_courses` where `pid`=? and `cid`=? and `section`=? and `role`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, pid);
 				ps.setInt(2, cid);
@@ -53,6 +54,39 @@ public class StudentDao{
 			LOGGER.debug("find record: " + jsonStr);
 		}
 		return record;
+	}
+	
+	public int setException(final int pid, final int cid, final int section, final String semester, final String exception, final String role){
+		final StringBuilder sqlBuilder = new StringBuilder("UPDATE `people_courses` SET `expectation`=? "
+				+ "WHERE `pid`=? AND `cid`=? AND `section`=? AND `semester`=? AND `role`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, exception);
+				ps.setInt(2, pid);
+				ps.setInt(3, cid);
+				ps.setInt(4, section);
+				ps.setString(5, semester);
+				ps.setString(6, role);
+			}
+		};
+		if (LOGGER.isDebugEnabled()){
+			List<Object> params = new ArrayList<Object>();
+			params.add(exception);
+			params.add(pid);
+			params.add(cid);
+			params.add(section);
+			params.add(semester);
+			params.add(role);
+			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			LOGGER.debug("set expectation: " + query);
+		}
+		int row = jdbcTemplate.update(sqlBuilder.toString(), setter);
+		if (row == 0){
+			LOGGER.error("set exception fail");
+			return -1;
+		}
+		return pid;
 	}
 	
 }

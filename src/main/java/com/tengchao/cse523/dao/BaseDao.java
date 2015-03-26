@@ -36,6 +36,7 @@ public class BaseDao {
 		final StringBuilder sqlBuilder = new StringBuilder("select * from `people` where `pid` = ?");
 		
 		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {
+			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, pid);
 			}
@@ -57,7 +58,7 @@ public class BaseDao {
 	
 	public int updatePersonInfo(final Person person){
 		final StringBuilder sqlBuilder = new StringBuilder("UPDATE `people` SET `firstname`=?, "
-				+ "`lastname`=?, `email`=?, `role`=?, `last_login_time`=?, `password`=? WHERE pid=?;");
+				+ "`lastname`=?, `email`=?, `role`=?, `last_login_time`=?, `password`=? WHERE `pid`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter(){
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -113,6 +114,7 @@ public class BaseDao {
 	public Course getCourseBasic(final String semester, final int cid){
 		final StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `courses` where `cid`=? and `semester`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, cid);
 				ps.setString(2, semester);
