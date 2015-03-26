@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tengchao.cse523.dto.Record;
-import com.tengchao.cse523.dto.mapper.row.RecordRowMapper;
+import com.tengchao.cse523.dto.mapper.RecordMapper;
 import com.tengchao.cse523.util.QueryUtil;
 
 public class StudentDao{
@@ -46,17 +46,13 @@ public class StudentDao{
 			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
 			LOGGER.debug("get student record: " + query);
 		}
-		List<Record> records = jdbcTemplate.query(sqlBuilder.toString(), setter, new RecordRowMapper());
-		if (records != null && records.size() > 0){
-			Record record = records.get(0);
-			if (LOGGER.isDebugEnabled()){
-				ObjectMapper mapper = new ObjectMapper();
-				String jsonStr = mapper.writeValueAsString(record);
-				LOGGER.debug("find record: " + jsonStr);
-			}
-			return record;
+		Record record = jdbcTemplate.query(sqlBuilder.toString(), setter, new RecordMapper());
+		if (LOGGER.isDebugEnabled()){
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonStr = mapper.writeValueAsString(record);
+			LOGGER.debug("find record: " + jsonStr);
 		}
-		return null;
+		return record;
 	}
 	
 }
