@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.tengchao.cse523.dto.Person;
 
-public class PersonRowMapper implements RowMapper<Person>{
+public class PersonRowMapper implements RowMapper<Person> {
 
 	public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Person person = new Person();

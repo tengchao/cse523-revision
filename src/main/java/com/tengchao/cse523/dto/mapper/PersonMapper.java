@@ -11,8 +11,9 @@ import com.tengchao.cse523.dto.Person;
 public class PersonMapper implements ResultSetExtractor<Person> {
 
 	@Override
-	public Person extractData(ResultSet rs) throws SQLException, DataAccessException {
-		if (!rs.next()){
+	public Person extractData(ResultSet rs) throws SQLException,
+			DataAccessException {
+		if (!rs.next()) {
 			return null;
 		}
 		Person person = new Person();

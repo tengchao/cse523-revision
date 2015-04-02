@@ -25,41 +25,45 @@ import com.tengchao.cse523.util.QueryUtil;
 public class BaseDao {
 
 	private JdbcTemplate jdbcTemplate;
-	
+
 	private final static Logger LOGGER = LogManager.getLogger(BaseDao.class);
-	
-	public void setDataSource(DataSource dataSource){
+
+	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	
-	public Person getPersonInfo(final int pid) throws JsonProcessingException{
-		final StringBuilder sqlBuilder = new StringBuilder("select * from `people` where `pid` = ?");
-		
+
+	public Person getPersonInfo(final int pid) throws JsonProcessingException {
+		final StringBuilder sqlBuilder = new StringBuilder(
+				"select * from `people` where `pid` = ?");
+
 		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, pid);
 			}
 		};
-		if (LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			List<Object> params = new ArrayList<Object>();
 			params.add(pid);
-			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params,
+					sqlBuilder.toString());
 			LOGGER.debug(query);
 		}
-		Person person = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter, new PersonMapper());
-		if (LOGGER.isDebugEnabled()){
+		Person person = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter,
+				new PersonMapper());
+		if (LOGGER.isDebugEnabled()) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonStr = mapper.writeValueAsString(person);
 			LOGGER.debug("find person: " + jsonStr);
 		}
 		return person;
 	}
-	
-	public int updatePersonInfo(final Person person){
-		final StringBuilder sqlBuilder = new StringBuilder("UPDATE `people` SET `firstname`=?, "
-				+ "`lastname`=?, `email`=?, `role`=?, `last_login_time`=?, `password`=? WHERE `pid`=?;");
-		PreparedStatementSetter setter = new PreparedStatementSetter(){
+
+	public int updatePersonInfo(final Person person) {
+		final StringBuilder sqlBuilder = new StringBuilder(
+				"UPDATE `people` SET `firstname`=?, "
+						+ "`lastname`=?, `email`=?, `role`=?, `last_login_time`=?, `password`=? WHERE `pid`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setString(1, person.getFirstName());
@@ -71,7 +75,7 @@ public class BaseDao {
 				ps.setInt(7, person.getPid());
 			}
 		};
-		if (LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			List<Object> params = new ArrayList<Object>();
 			params.add(person.getFirstName());
 			params.add(person.getLastName());
@@ -80,19 +84,22 @@ public class BaseDao {
 			params.add(person.getLastLoginTime());
 			params.add(person.getPassword());
 			params.add(person.getPid());
-			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params,
+					sqlBuilder.toString());
 			LOGGER.debug("update person: " + query);
 		}
 		int rows = jdbcTemplate.update(sqlBuilder.toString(), setter);
-		if (0 == rows){
+		if (0 == rows) {
 			LOGGER.error("update person info failure");
 			return -1;
 		}
-		return person.getPid();	
+		return person.getPid();
 	}
-	
-	public List<PersonCourseRelation> getCoursesForPersonSemester(final int pid, final String semester){
-		final StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `people_courses` where `pid`=? and `semester`=?;");
+
+	public List<PersonCourseRelation> getCoursesForPersonSemester(
+			final int pid, final String semester) {
+		final StringBuilder sqlBuilder = new StringBuilder(
+				"SELECT * FROM `people_courses` where `pid`=? and `semester`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -100,19 +107,23 @@ public class BaseDao {
 				ps.setString(2, semester);
 			}
 		};
-		if (LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			List<Object> params = new ArrayList<Object>();
 			params.add(pid);
 			params.add(semester);
-			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params,
+					sqlBuilder.toString());
 			LOGGER.debug("get course dashboard: " + query);
 		}
-		List<PersonCourseRelation> relations = jdbcTemplate.query(sqlBuilder.toString(), setter, new PersonCourseRelationRowMapper());
+		List<PersonCourseRelation> relations = jdbcTemplate.query(
+				sqlBuilder.toString(), setter,
+				new PersonCourseRelationRowMapper());
 		return relations;
 	}
-	
-	public Course getCourseBasic(final String semester, final int cid){
-		final StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM `courses` where `cid`=? and `semester`=?;");
+
+	public Course getCourseBasic(final String semester, final int cid) {
+		final StringBuilder sqlBuilder = new StringBuilder(
+				"SELECT * FROM `courses` where `cid`=? and `semester`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -120,14 +131,16 @@ public class BaseDao {
 				ps.setString(2, semester);
 			}
 		};
-		if (LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			List<Object> params = new ArrayList<Object>();
 			params.add(cid);
 			params.add(semester);
-			final String query = QueryUtil.getQuery(params, sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params,
+					sqlBuilder.toString());
 			LOGGER.debug(query);
 		}
-		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter, new CourseMapper());
+		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter,
+				new CourseMapper());
 		return course;
 	}
 }

@@ -8,12 +8,12 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import com.tengchao.cse523.dto.Record;
 
-public class RecordMapper implements ResultSetExtractor<Record>{
+public class RecordMapper implements ResultSetExtractor<Record> {
 
 	@Override
 	public Record extractData(ResultSet rs) throws SQLException,
 			DataAccessException {
-		if (rs.next()){
+		if (rs.next()) {
 			Record record = new Record();
 			record.setPid(rs.getInt("pid"));
 			record.setName(rs.getString("name"));

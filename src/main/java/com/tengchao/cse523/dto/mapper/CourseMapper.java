@@ -12,7 +12,7 @@ public class CourseMapper implements ResultSetExtractor<Course> {
 	@Override
 	public Course extractData(ResultSet rs) throws SQLException,
 			DataAccessException {
-		if (rs.next()){
+		if (rs.next()) {
 			Course course = new Course();
 			course.setCourseId(rs.getInt("cid"));
 			course.setNickId(rs.getString("nickId"));

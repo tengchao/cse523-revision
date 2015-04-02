@@ -13,49 +13,50 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tengchao.cse523.dto.ErrorResponse;
 
 /**
-*
-*         Performs the exception handling and offers them globally. The
-*         exceptions below could be raised by any controller and they would be
-*         handled here, if not handled in the controller already.
-*
-*/
+ *
+ * Performs the exception handling and offers them globally. The exceptions
+ * below could be raised by any controller and they would be handled here, if
+ * not handled in the controller already.
+ *
+ */
 
 @ControllerAdvice
 public class GenericExceptionHandler {
 
 	/**
-     * Converts predefined exception to an Http status code
-     * {@link HttpStatus#NOT_FOUND}
-     *  @return {@link ErrorResponse}
-     */
+	 * Converts predefined exception to an Http status code
+	 * {@link HttpStatus#NOT_FOUND}
+	 * 
+	 * @return {@link ErrorResponse}
+	 */
 	@ExceptionHandler(DataNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public @ResponseBody ErrorResponse dataNotFound(DataNotFoundException e){
+	public @ResponseBody ErrorResponse dataNotFound(DataNotFoundException e) {
 		return new ErrorResponse(e.getMessage());
 	}
-	
+
 	@ExceptionHandler(BadRequestException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public @ResponseBody ErrorResponse badRequest(BadRequestException e){
+	public @ResponseBody ErrorResponse badRequest(BadRequestException e) {
 		return new ErrorResponse(e.getMessage());
 	}
-	
+
 	@ExceptionHandler(JsonParseException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public @ResponseBody ErrorResponse jsonParseError(JsonParseException e){
+	public @ResponseBody ErrorResponse jsonParseError(JsonParseException e) {
 		return new ErrorResponse(e.getMessage());
 	}
-	
+
 	@ExceptionHandler(JsonMappingException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public @ResponseBody ErrorResponse jsonMappingError(JsonMappingException e){
+	public @ResponseBody ErrorResponse jsonMappingError(JsonMappingException e) {
 		return new ErrorResponse(e.getMessage());
 	}
-	
+
 	@ExceptionHandler(IOException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public @ResponseBody ErrorResponse ioError(IOException e){
+	public @ResponseBody ErrorResponse ioError(IOException e) {
 		return new ErrorResponse(e.getMessage());
 	}
-	
+
 }

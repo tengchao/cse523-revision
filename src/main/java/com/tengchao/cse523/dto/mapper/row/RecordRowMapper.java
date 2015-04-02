@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.tengchao.cse523.dto.Record;
 
-public class RecordRowMapper implements RowMapper<Record>{
+public class RecordRowMapper implements RowMapper<Record> {
 
 	@Override
 	public Record mapRow(ResultSet rs, int rowNum) throws SQLException {

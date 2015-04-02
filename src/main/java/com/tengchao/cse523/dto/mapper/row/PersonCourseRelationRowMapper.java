@@ -7,7 +7,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.tengchao.cse523.dto.PersonCourseRelation;
 
-public class PersonCourseRelationRowMapper implements RowMapper<PersonCourseRelation>{
+public class PersonCourseRelationRowMapper implements
+		RowMapper<PersonCourseRelation> {
 
 	@Override
 	public PersonCourseRelation mapRow(ResultSet rs, int rowNum)
