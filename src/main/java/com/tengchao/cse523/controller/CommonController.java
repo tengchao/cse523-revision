@@ -26,6 +26,7 @@ import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.exception.BadRequestException;
 import com.tengchao.cse523.exception.DataNotFoundException;
 import com.tengchao.cse523.service.BaseService;
+import com.tengchao.cse523.util.JsonUtil;
 
 @RestController
 public class CommonController {
@@ -76,8 +77,7 @@ public class CommonController {
 	@ResponseBody
 	public ResponseEntity<Map<String, Integer>> updatePersonInfo(
 			@RequestParam(value = "pid", required = true) int pid,
-			@RequestBody String requestPayload) throws JsonParseException,
-			JsonMappingException, IOException {
+			@RequestBody String requestPayload) {
 		Map<String, Integer> response = new HashMap<String, Integer>();
 		HttpStatus responseCode = HttpStatus.OK;
 		if (StringUtils.isNullOrEmpty(requestPayload)) {
@@ -85,9 +85,8 @@ public class CommonController {
 			throw new BadRequestException("request payload is null or empty");
 		}
 
-		ObjectMapper mapper = new ObjectMapper();
 		Person newPerson = null;
-		newPerson = mapper.readValue(requestPayload, Person.class);
+		newPerson = (Person) JsonUtil.toObject(requestPayload, Person.class);
 		int personId = baseService.updatePersonInfo(newPerson);
 
 		if (personId < 0) {

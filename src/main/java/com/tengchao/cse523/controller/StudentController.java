@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.jdbc.StringUtils;
 import com.tengchao.cse523.exception.BadRequestException;
 import com.tengchao.cse523.service.StudentService;
+import com.tengchao.cse523.util.JsonUtil;
 
 @RestController
 public class StudentController {
@@ -80,17 +80,14 @@ public class StudentController {
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
 			@RequestParam(value = "section", required = true) int section,
-			@RequestBody String requestPayload) throws JsonParseException,
-			JsonMappingException, IOException {
+			@RequestBody String requestPayload){
 		Map<String, Integer> response = new HashMap<String, Integer>();
 		HttpStatus responseCode = HttpStatus.OK;
 		if (StringUtils.isNullOrEmpty(requestPayload)) {
 			LOGGER.error("request payload is null or empty");
 			throw new BadRequestException("request payload is null or empty");
 		}
-		ObjectMapper objMapper = new ObjectMapper();
-		Map<String, String> temp = null;
-		temp = objMapper.readValue(requestPayload, Map.class);
+		Map<String, String> temp = JsonUtil.toMap(requestPayload);
 		if (!temp.containsKey("expectation")) {
 			LOGGER.error("parameter expectation is missing");
 			throw new BadRequestException(
@@ -113,6 +110,22 @@ public class StudentController {
 	/*************************************************************************
 	 * TA section page
 	 *************************************************************************/
+	/**
+	 * get section info for TA
+	 * 
+	 * @param pid
+	 * @param cid
+	 * @param section
+	 * @return
+	 */
+	@RequestMapping(value = "/TA/{semester}/section", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getTASection(
+			@RequestParam(value = "pid", required = true) int pid,
+			@RequestParam(value = "cid", required = true) int cid,
+			@RequestParam(value = "section", required = true) int section){
+		return null;
+	}
 	
 	/*************************************************************************
 	 * TA update page

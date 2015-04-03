@@ -41,15 +41,9 @@ public class GenericExceptionHandler {
 		return new ErrorResponse(e.getMessage());
 	}
 
-	@ExceptionHandler(JsonParseException.class)
+	@ExceptionHandler(JsonException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public @ResponseBody ErrorResponse jsonParseError(JsonParseException e) {
-		return new ErrorResponse(e.getMessage());
-	}
-
-	@ExceptionHandler(JsonMappingException.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public @ResponseBody ErrorResponse jsonMappingError(JsonMappingException e) {
+	public @ResponseBody ErrorResponse jsonError(JsonException e) {
 		return new ErrorResponse(e.getMessage());
 	}
 
