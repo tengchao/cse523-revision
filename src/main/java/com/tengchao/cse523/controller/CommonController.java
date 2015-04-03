@@ -39,6 +39,10 @@ public class CommonController {
 		this.baseService = baseService;
 	}
 
+	/*************************************************************************
+	 * person info page
+	 *************************************************************************/
+
 	/**
 	 * get person info
 	 * 
@@ -97,6 +101,10 @@ public class CommonController {
 
 		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
+
+	/*************************************************************************
+	 * course dashboard page
+	 *************************************************************************/
 
 	/**
 	 * request the dash board

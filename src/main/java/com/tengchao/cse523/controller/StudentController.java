@@ -36,6 +36,10 @@ public class StudentController {
 		this.studentService = studentService;
 	}
 
+	/*************************************************************************
+	 * student section page
+	 *************************************************************************/
+
 	/**
 	 * request single course info. should contain courseInfo (professor, TA and
 	 * basic course info) and course records
@@ -105,5 +109,15 @@ public class StudentController {
 		response.put("pid", personId);
 		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
+	
+	/*************************************************************************
+	 * TA section page
+	 *************************************************************************/
+	
+	/*************************************************************************
+	 * TA update page
+	 *************************************************************************/
+
+
 
 }
