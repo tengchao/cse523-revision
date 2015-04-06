@@ -10,13 +10,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tengchao.cse523.service.ProfessorService;
+
 @RestController
 public class ProfessorController {
+	
+	private ProfessorService professorService;
+	
+	public void setProfessorService(ProfessorService professorService) {
+		this.professorService = professorService;
+	}
 	
 	/*************************************************************************
 	 * course dashboard page
 	 *************************************************************************/
-	
+
 	/**
 	 * create new course: nickid, cname, seats, available seats should be
 	 * included in the payload

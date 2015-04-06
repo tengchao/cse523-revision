@@ -20,4 +20,8 @@
 	<bean id="studentController" class="com.tengchao.cse523.controller.StudentController">
 		<property name="studentService" ref="studentService" />
 	</bean>
+	
+	<bean id="professorController" class="com.tengchao.cse523.controller.ProfessorController">
+		<property name="professorService" ref="professorService" />
+	</bean>
 </beans>
