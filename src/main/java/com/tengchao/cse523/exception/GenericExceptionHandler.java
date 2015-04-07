@@ -1,6 +1,7 @@
 package com.tengchao.cse523.exception;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,5 +53,12 @@ public class GenericExceptionHandler {
 	public @ResponseBody ErrorResponse ioError(IOException e) {
 		return new ErrorResponse(e.getMessage());
 	}
+	
+	@ExceptionHandler(SQLException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ErrorResponse sqlError(SQLException e){
+		return new ErrorResponse(e.getMessage());
+	}
+	
 
 }
