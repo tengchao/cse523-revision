@@ -14,7 +14,9 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.dto.Record;
+import com.tengchao.cse523.dto.mapper.CourseMapper;
 import com.tengchao.cse523.dto.mapper.RecordMapper;
 import com.tengchao.cse523.util.QueryUtil;
 
@@ -61,10 +63,10 @@ public class StudentDao {
 	}
 
 	public int setException(final int pid, final int cid, final int section,
-			final String semester, final String exception, final String role) {
+			final String exception, final String role) {
 		final StringBuilder sqlBuilder = new StringBuilder(
 				"UPDATE `people_courses` SET `expectation`=? "
-						+ "WHERE `pid`=? AND `cid`=? AND `section`=? AND `semester`=? AND `role`=?;");
+						+ "WHERE `pid`=? AND `cid`=? AND `section`=? AND `role`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -72,8 +74,7 @@ public class StudentDao {
 				ps.setInt(2, pid);
 				ps.setInt(3, cid);
 				ps.setInt(4, section);
-				ps.setString(5, semester);
-				ps.setString(6, role);
+				ps.setString(5, role);
 			}
 		};
 		if (LOGGER.isDebugEnabled()) {
@@ -82,7 +83,6 @@ public class StudentDao {
 			params.add(pid);
 			params.add(cid);
 			params.add(section);
-			params.add(semester);
 			params.add(role);
 			final String query = QueryUtil.getQuery(params,
 					sqlBuilder.toString());
@@ -94,6 +94,27 @@ public class StudentDao {
 			return -1;
 		}
 		return pid;
+	}
+	
+	public Course getCourseBasic(final int cid) {
+		final StringBuilder sqlBuilder = new StringBuilder(
+				"SELECT * FROM `courses` where `cid`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, cid);
+			}
+		};
+		if (LOGGER.isDebugEnabled()) {
+			List<Object> params = new ArrayList<Object>();
+			params.add(cid);
+			final String query = QueryUtil.getQuery(params,
+					sqlBuilder.toString());
+			LOGGER.debug(query);
+		}
+		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter,
+				new CourseMapper());
+		return course;
 	}
 
 }

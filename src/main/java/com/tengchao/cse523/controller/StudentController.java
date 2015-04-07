@@ -50,16 +50,15 @@ public class StudentController {
 	 * @return
 	 * @throws JsonProcessingException
 	 */
-	@RequestMapping(value = "/student/{semester}/course", method = RequestMethod.POST)
+	@RequestMapping(value = "/student/viewCourse", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> getCourse(
-			@PathVariable(value = "semester") String semester,
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
 			@RequestParam(value = "section", required = true) int section)
 			throws JsonProcessingException {
-		Map<String, Object> response = studentService.getCourseDetails(
-				semester, pid, cid, section);
+		Map<String, Object> response = studentService.getCourseDetails(pid,
+				cid, section);
 		HttpStatus responseCode = HttpStatus.OK;
 		return new ResponseEntity<Map<String, Object>>(response, responseCode);
 	}
@@ -73,14 +72,13 @@ public class StudentController {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
-	@RequestMapping(value = "/student/{semester}/setExpectation", method = RequestMethod.PUT)
+	@RequestMapping(value = "/student/course/setExpectation", method = RequestMethod.PUT)
 	@ResponseBody
 	public ResponseEntity<Map<String, Integer>> setExpectation(
-			@PathVariable(value = "semester") String semester,
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
 			@RequestParam(value = "section", required = true) int section,
-			@RequestBody String requestPayload){
+			@RequestBody String requestPayload) {
 		Map<String, Integer> response = new HashMap<String, Integer>();
 		HttpStatus responseCode = HttpStatus.OK;
 		if (StringUtils.isNullOrEmpty(requestPayload)) {
@@ -95,8 +93,8 @@ public class StudentController {
 							+ requestPayload);
 		}
 		String expectation = temp.get("expectation");
-		int personId = studentService.setExpectation(semester, pid, cid,
-				section, expectation);
+		int personId = studentService.setExpectation(pid, cid, section,
+				expectation);
 		if (personId < 0) {
 			LOGGER.error("cannot set expectation with pid=" + pid + ", cid="
 					+ cid + ", section=" + section + ", expectation="
@@ -106,7 +104,7 @@ public class StudentController {
 		response.put("pid", personId);
 		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
-	
+
 	/*************************************************************************
 	 * TA section page
 	 *************************************************************************/
@@ -118,19 +116,17 @@ public class StudentController {
 	 * @param section
 	 * @return
 	 */
-	@RequestMapping(value = "/TA/{semester}/section", method = RequestMethod.POST)
+	@RequestMapping(value = "/TA/viewSection", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> getTASection(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
-			@RequestParam(value = "section", required = true) int section){
+			@RequestParam(value = "section", required = true) int section) {
 		return null;
 	}
-	
+
 	/*************************************************************************
 	 * TA update page
 	 *************************************************************************/
-
-
 
 }

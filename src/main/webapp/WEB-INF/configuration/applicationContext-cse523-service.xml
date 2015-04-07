@@ -12,11 +12,9 @@
 	
 	<bean id="studentService" class="com.tengchao.cse523.service.impl.StudentServiceImpl">
 		<property name="studentDao" ref="studentDao" />
-		<property name="baseDao" ref="baseDao" />
 	</bean>
 	
 	<bean id="professorService" class="com.tengchao.cse523.service.impl.ProfessorServiceImpl">
 		<property name="professorDao" ref="professorDao" />
-		<property name="baseDao" ref="baseDao" />
 	</bean>
 </beans>

@@ -121,26 +121,4 @@ public class BaseDao {
 		return relations;
 	}
 
-	public Course getCourseBasic(final String semester, final int cid) {
-		final StringBuilder sqlBuilder = new StringBuilder(
-				"SELECT * FROM `courses` where `cid`=? and `semester`=?;");
-		PreparedStatementSetter setter = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setInt(1, cid);
-				ps.setString(2, semester);
-			}
-		};
-		if (LOGGER.isDebugEnabled()) {
-			List<Object> params = new ArrayList<Object>();
-			params.add(cid);
-			params.add(semester);
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
-			LOGGER.debug(query);
-		}
-		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter,
-				new CourseMapper());
-		return course;
-	}
 }
