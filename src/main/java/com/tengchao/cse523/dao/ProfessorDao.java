@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.tengchao.cse523.dto.Course;
+import com.tengchao.cse523.dto.mapper.CourseMapper;
 import com.tengchao.cse523.util.GeneralUtil;
 import com.tengchao.cse523.util.QueryUtil;
 
@@ -61,6 +63,29 @@ public class ProfessorDao {
 			throw new SQLException("fail to insert new course");
 		}
 		return (int) keyHolder.getKeys().get("cid");
+	}
+	
+	public Course getCourseBasic(final int cid, final int pid) {
+		final StringBuilder sqlBuilder = new StringBuilder(
+				"SELECT * FROM `courses` where `cid`=? and `professorId`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, cid);
+				ps.setInt(2, pid);
+			}
+		};
+		if (LOGGER.isDebugEnabled()) {
+			List<Object> params = new ArrayList<Object>();
+			params.add(cid);
+			params.add(pid);
+			final String query = QueryUtil.getQuery(params,
+					sqlBuilder.toString());
+			LOGGER.debug(query);
+		}
+		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter,
+				new CourseMapper());
+		return course;
 	}
 
 }

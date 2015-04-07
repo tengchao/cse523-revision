@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mysql.jdbc.StringUtils;
+import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.exception.BadRequestException;
 import com.tengchao.cse523.service.ProfessorService;
 import com.tengchao.cse523.util.GeneralUtil;
@@ -134,11 +135,13 @@ public class ProfessorController {
 	 */
 	@RequestMapping(value = "/professor/viewCourse", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> getCourseDetails(
+	public ResponseEntity<Course> getCourseDetails(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid) {
-		
-		return null;
+		Course course = null;
+		HttpStatus responseCode = HttpStatus.OK;
+		course = professorService.getCourse(cid, pid);
+		return new ResponseEntity<Course>(course, responseCode);
 	}
 
 	/**
