@@ -1,7 +1,11 @@
 package com.tengchao.cse523.controller;
 
+import java.sql.SQLException;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,46 +14,87 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mysql.jdbc.StringUtils;
+import com.tengchao.cse523.exception.BadRequestException;
 import com.tengchao.cse523.service.ProfessorService;
+import com.tengchao.cse523.util.GeneralUtil;
+import com.tengchao.cse523.util.JsonUtil;
 
 @RestController
 public class ProfessorController {
-	
+
+	private static final Logger LOGGER = LogManager
+			.getLogger(ProfessorController.class);
 	private ProfessorService professorService;
-	
+
 	public void setProfessorService(ProfessorService professorService) {
 		this.professorService = professorService;
 	}
-	
+
 	/*************************************************************************
 	 * course dashboard page
 	 *************************************************************************/
 
 	/**
-	 * create new course: nickid, cname, seats, available seats should be
-	 * included in the payload
+	 * create new course
 	 * 
 	 * @param pid
 	 * @param payload
+	 *            {nickId, cname, gradeRange, percentageFlag,
+	 *            categoryPercentage}
+	 * @return {cid}
+	 * @throws SQLException
+	 */
+	@RequestMapping(value = "/professor/createCourse", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Integer> createCourse(
+			@RequestParam(value = "pid", required = true) int pid,
+			@RequestBody String requestPayload) throws SQLException {
+		if (StringUtils.isNullOrEmpty(requestPayload)) {
+			LOGGER.error("request payload is null or empty");
+			throw new BadRequestException("request payload is null or empty");
+		}
+		Map<String, String> jsonMap = JsonUtil.toMap(requestPayload);
+		String[] requiredParams = new String[] { "nickId", "cname",
+				"gradeRange", "percentageFlag", "categoryPercentage" };
+		if (!GeneralUtil.containsAllKeys(jsonMap, requiredParams)) {
+			LOGGER.error("some parameter is missing in the request payload: "
+					+ requestPayload);
+			throw new BadRequestException(
+					"some parameter is missing in the request payload: "
+							+ requestPayload);
+		}
+		HttpStatus responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+		int cid = professorService.createCourse(jsonMap, requiredParams);
+		responseCode = HttpStatus.OK;
+		return new ResponseEntity<Integer>(cid, responseCode);
+	}
+
+	/**
+	 * delete course
+	 * 
+	 * @param pid
+	 * @param cid
 	 * @return
 	 */
-	@RequestMapping(value = "/professor/{semester}/createCourse", method = RequestMethod.POST)
+	@RequestMapping(value = "/professor/deleteCourse", method = RequestMethod.DELETE)
 	@ResponseBody
-	public ResponseEntity<String> createCourse(
+	public ResponseEntity<String> deleteCourse(
 			@RequestParam(value = "pid", required = true) int pid,
-			@RequestBody String requestPayload) {
+			@RequestParam(value = "cid", required = true) int cid) {
 		return null;
 	}
-	
+
 	/**
 	 * create new section: section should be included in the payload
 	 * 
 	 * @param pid
 	 * @param cid
 	 * @param requestPayload
-	 * @return
+	 *            {section}
+	 * @return {cid, section}
 	 */
-	@RequestMapping(value = "/professor/{semester}/createSection", method = RequestMethod.POST)
+	@RequestMapping(value = "/professor/createSection", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<String> createSection(
 			@RequestParam(value = "pid", required = true) int pid,
@@ -57,7 +102,24 @@ public class ProfessorController {
 			@RequestBody String requestPayload) {
 		return null;
 	}
-	
+
+	/**
+	 * delete section
+	 * 
+	 * @param pid
+	 * @param cid
+	 * @param section
+	 * @return
+	 */
+	@RequestMapping(value = "/professor/deleteSection", method = RequestMethod.DELETE)
+	@ResponseBody
+	public ResponseEntity<String> deleteSection(
+			@RequestParam(value = "pid", required = true) int pid,
+			@RequestParam(value = "cid", required = true) int cid,
+			@RequestParam(value = "section", required = true) int section) {
+		return null;
+	}
+
 	/*************************************************************************
 	 * course details page
 	 *************************************************************************/
@@ -67,16 +129,18 @@ public class ProfessorController {
 	 * 
 	 * @param pid
 	 * @param cid
-	 * @return
+	 * @return {cid, nickId, cname, sections, gradeRange, percentageFlag,
+	 *         categoryPercentage}
 	 */
-	@RequestMapping(value = "/professor/{semester}/course", method = RequestMethod.POST)
+	@RequestMapping(value = "/professor/viewCourse", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> getCourseDetails(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid) {
+		
 		return null;
 	}
-	
+
 	/**
 	 * update course details
 	 * 
@@ -85,7 +149,7 @@ public class ProfessorController {
 	 * @param requestPayload
 	 * @return
 	 */
-	@RequestMapping(value = "/professor/{semester}/course", method = RequestMethod.PUT)
+	@RequestMapping(value = "/professor/updateCourse", method = RequestMethod.PUT)
 	@ResponseBody
 	public ResponseEntity<String> updateCourseDetails(
 			@RequestParam(value = "pid", required = true) int pid,
@@ -93,25 +157,24 @@ public class ProfessorController {
 			@RequestBody String requestPayload) {
 		return null;
 	}
-	
+
 	/**
-	 * modify TA capabilities and responsibilities: payload include commands and
-	 * whole TA info
+	 * modify TA capabilities and responsibilities
 	 * 
 	 * @param pid
 	 * @param cid
 	 * @param requestPayload
 	 * @return
 	 */
-	@RequestMapping(value = "/professor/{semester}/setTAsResponsibilities", method = RequestMethod.POST)
+	@RequestMapping(value = "/professor/updateTAsResponsibilities", method = RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<String> actionTAsInCourse(
+	public ResponseEntity<String> updateTAsInCourse(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
 			@RequestBody String requestPayload) {
 		return null;
 	}
-	
+
 	/**
 	 * get TA info for this course
 	 * 
@@ -120,14 +183,49 @@ public class ProfessorController {
 	 * @param requestPayload
 	 * @return
 	 */
-	@RequestMapping(value = "/professor/{semester}/getTAsResponsibilities", method = RequestMethod.POST)
+	@RequestMapping(value = "/professor/viewTAsResponsibilities", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<String> getTAsInCourse(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
-			@RequestBody String requestPayload){
+			@RequestBody String requestPayload) {
 		return null;
 	}
+
+	/**
+	 * add TA in the course
+	 * 
+	 * @param pid
+	 * @param cid
+	 * @param requestPayload
+	 * @return
+	 */
+	@RequestMapping(value = "/professor/addTAForCourse", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<String> addTAInCourse(
+			@RequestParam(value = "pid", required = true) int pid,
+			@RequestParam(value = "cid", required = true) int cid,
+			@RequestBody String requestPayload) {
+		return null;
+	}
+
+	/**
+	 * delete TA in course
+	 * 
+	 * @param pid
+	 * @param cid
+	 * @param requestPayload
+	 * @return
+	 */
+	@RequestMapping(value = "/professor/deleteTAForCourse", method = RequestMethod.DELETE)
+	@ResponseBody
+	public ResponseEntity<String> deleteTAInCourse(
+			@RequestParam(value = "pid", required = true) int pid,
+			@RequestParam(value = "cid", required = true) int cid,
+			@RequestBody String requestPayload) {
+		return null;
+	}
+
 	/*************************************************************************
 	 * section page
 	 *************************************************************************/
@@ -139,7 +237,7 @@ public class ProfessorController {
 	 * @param cid
 	 * @return
 	 */
-	@RequestMapping(value = "/professor/{semester}/section", method = RequestMethod.POST)
+	@RequestMapping(value = "/professor/viewSection", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> getSectionRecords(
 			@RequestParam(value = "pid", required = true) int pid,
@@ -147,7 +245,7 @@ public class ProfessorController {
 			@RequestParam(value = "section", required = true) int section) {
 		return null;
 	}
-	
+
 	/*************************************************************************
 	 * update record page
 	 *************************************************************************/
@@ -155,17 +253,5 @@ public class ProfessorController {
 	/*************************************************************************
 	 * preference page
 	 *************************************************************************/
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
 
 }
