@@ -59,12 +59,12 @@ public class ProfessorDao {
 				return pst;
 			}
 		}, keyHolder);
-		if (0 == rows){
+		if (0 == rows) {
 			throw new SQLException("fail to insert new course");
 		}
 		return (int) keyHolder.getKeys().get("cid");
 	}
-	
+
 	public Course getCourseBasic(final int cid, final int pid) {
 		final StringBuilder sqlBuilder = new StringBuilder(
 				"SELECT * FROM `courses` where `cid`=? and `professorId`=?;");
@@ -86,6 +86,46 @@ public class ProfessorDao {
 		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter,
 				new CourseMapper());
 		return course;
+	}
+
+	public int deleteCourseInCourseTable(final int pid, final int cid) {
+		final String sqlString = new String(
+				"delete * from `courses` where `cid`=? and `professorId`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, cid);
+				ps.setInt(2, pid);
+			}
+		};
+		if (LOGGER.isDebugEnabled()) {
+			List<Object> params = new ArrayList<Object>();
+			params.add(cid);
+			params.add(pid);
+			final String query = QueryUtil.getQuery(params, sqlString);
+			LOGGER.debug("delete course in table courses: " + query);
+		}
+		int rows = jdbcTemplate.update(sqlString, setter);
+		return rows;
+	}
+
+	public int deleteCourseInRelationTable(final int cid) {
+		final String sqlString = new String(
+				"delete * from `people_courses` where `cid`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, cid);
+			}
+		};
+		if (LOGGER.isDebugEnabled()) {
+			List<Object> params = new ArrayList<Object>();
+			params.add(cid);
+			final String query = QueryUtil.getQuery(params, sqlString);
+			LOGGER.debug("delete course in table people_courses: " + query);
+		}
+		int rows = jdbcTemplate.update(sqlString, setter);
+		return rows;
 	}
 
 }

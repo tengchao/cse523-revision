@@ -11,4 +11,6 @@ public interface ProfessorService {
 			String[] requiredParams) throws SQLException;
 	
 	public Course getCourse(int cid, int pid);
+	
+	public boolean deleteCourse(int cid, int pid) throws SQLException;
 }

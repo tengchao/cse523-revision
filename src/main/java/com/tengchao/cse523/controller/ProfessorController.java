@@ -1,6 +1,7 @@
 package com.tengchao.cse523.controller;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -77,13 +78,19 @@ public class ProfessorController {
 	 * @param pid
 	 * @param cid
 	 * @return
+	 * @throws SQLException
 	 */
 	@RequestMapping(value = "/professor/deleteCourse", method = RequestMethod.DELETE)
 	@ResponseBody
-	public ResponseEntity<String> deleteCourse(
+	public ResponseEntity<Map<String, Integer>> deleteCourse(
 			@RequestParam(value = "pid", required = true) int pid,
-			@RequestParam(value = "cid", required = true) int cid) {
-		return null;
+			@RequestParam(value = "cid", required = true) int cid)
+			throws SQLException {
+		HttpStatus responseCode = HttpStatus.OK;
+		Map<String, Integer> response = new HashMap<String, Integer>();
+		professorService.deleteCourse(cid, pid);
+		response.put("cid", cid);
+		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
 
 	/**

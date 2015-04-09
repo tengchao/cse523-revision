@@ -10,10 +10,16 @@
 		scans specified packages for classes configured as Spring managed beans and 
 		automatically sets up objects annotated with @Controller, @Service etc. -->
 	<context:component-scan base-package="com.tengchao.cse523.dto" />
-	
-	<mvc:annotation-driven />
+
+	<mvc:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
 
 	<context:property-placeholder location="classpath:mysql.properties" />
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -26,11 +32,11 @@
 	<bean id="baseDao" class="com.tengchao.cse523.dao.BaseDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="studentDao" class="com.tengchao.cse523.dao.StudentDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="professorDao" class="com.tengchao.cse523.dao.ProfessorDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>

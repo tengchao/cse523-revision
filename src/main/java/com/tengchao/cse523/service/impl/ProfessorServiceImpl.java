@@ -3,6 +3,8 @@ package com.tengchao.cse523.service.impl;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tengchao.cse523.dao.BaseDao;
 import com.tengchao.cse523.dao.ProfessorDao;
 import com.tengchao.cse523.dto.Course;
@@ -28,6 +30,17 @@ public class ProfessorServiceImpl implements ProfessorService {
 		Course course = null;
 		course = professorDao.getCourseBasic(cid, pid);
 		return course;
+	}
+
+	@Override
+	@Transactional
+	public boolean deleteCourse(int cid, int pid) throws SQLException {
+		int rows = professorDao.deleteCourseInCourseTable(pid, cid);
+		if (rows != 1){
+			throw new SQLException("delete course with affected rows: " + rows);
+		}
+		professorDao.deleteCourseInRelationTable(cid);
+		return true;
 	}
 	
 	
