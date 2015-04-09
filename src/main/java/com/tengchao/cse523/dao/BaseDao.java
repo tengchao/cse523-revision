@@ -33,7 +33,7 @@ public class BaseDao {
 	}
 
 	public Person getPersonInfo(final int pid) throws JsonProcessingException {
-		final StringBuilder sqlBuilder = new StringBuilder(
+		final String sqlString = new String(
 				"select * from `people` where `pid` = ?");
 
 		PreparedStatementSetter psmtSetter = new PreparedStatementSetter() {
@@ -45,11 +45,10 @@ public class BaseDao {
 		if (LOGGER.isDebugEnabled()) {
 			List<Object> params = new ArrayList<Object>();
 			params.add(pid);
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug(query);
 		}
-		Person person = jdbcTemplate.query(sqlBuilder.toString(), psmtSetter,
+		Person person = jdbcTemplate.query(sqlString, psmtSetter,
 				new PersonMapper());
 		if (LOGGER.isDebugEnabled()) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +59,7 @@ public class BaseDao {
 	}
 
 	public int updatePersonInfo(final Person person) {
-		final StringBuilder sqlBuilder = new StringBuilder(
+		final String sqlString = new String(
 				"UPDATE `people` SET `firstname`=?, "
 						+ "`lastname`=?, `email`=?, `role`=?, `last_login_time`=?, `password`=? WHERE `pid`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
@@ -84,11 +83,10 @@ public class BaseDao {
 			params.add(person.getLastLoginTime());
 			params.add(person.getPassword());
 			params.add(person.getPid());
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug("update person: " + query);
 		}
-		int rows = jdbcTemplate.update(sqlBuilder.toString(), setter);
+		int rows = jdbcTemplate.update(sqlString, setter);
 		if (0 == rows) {
 			LOGGER.error("update person info failure");
 			return -1;
@@ -98,7 +96,7 @@ public class BaseDao {
 
 	public List<PersonCourseRelation> getCoursesForPersonSemester(
 			final int pid, final String semester) {
-		final StringBuilder sqlBuilder = new StringBuilder(
+		final String sqlString = new String(
 				"SELECT * FROM `people_courses` where `pid`=? and `semester`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
@@ -111,13 +109,11 @@ public class BaseDao {
 			List<Object> params = new ArrayList<Object>();
 			params.add(pid);
 			params.add(semester);
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug("get course dashboard: " + query);
 		}
-		List<PersonCourseRelation> relations = jdbcTemplate.query(
-				sqlBuilder.toString(), setter,
-				new PersonCourseRelationRowMapper());
+		List<PersonCourseRelation> relations = jdbcTemplate.query(sqlString,
+				setter, new PersonCourseRelationRowMapper());
 		return relations;
 	}
 

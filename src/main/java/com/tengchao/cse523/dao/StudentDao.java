@@ -31,7 +31,7 @@ public class StudentDao {
 
 	public Record getRecord(final int pid, final int cid, final int section,
 			final String role) throws JsonProcessingException {
-		final StringBuilder sqlBuilder = new StringBuilder(
+		final String sqlString = new String(
 				"SELECT * FROM `people_courses` where `pid`=? and `cid`=? and `section`=? and `role`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
@@ -48,11 +48,10 @@ public class StudentDao {
 			params.add(cid);
 			params.add(section);
 			params.add(role);
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug("get student record: " + query);
 		}
-		Record record = jdbcTemplate.query(sqlBuilder.toString(), setter,
+		Record record = jdbcTemplate.query(sqlString, setter,
 				new RecordMapper());
 		if (LOGGER.isDebugEnabled()) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +63,7 @@ public class StudentDao {
 
 	public int setException(final int pid, final int cid, final int section,
 			final String exception, final String role) {
-		final StringBuilder sqlBuilder = new StringBuilder(
+		final String sqlString = new String(
 				"UPDATE `people_courses` SET `expectation`=? "
 						+ "WHERE `pid`=? AND `cid`=? AND `section`=? AND `role`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
@@ -84,20 +83,19 @@ public class StudentDao {
 			params.add(cid);
 			params.add(section);
 			params.add(role);
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug("set expectation: " + query);
 		}
-		int row = jdbcTemplate.update(sqlBuilder.toString(), setter);
+		int row = jdbcTemplate.update(sqlString, setter);
 		if (row == 0) {
 			LOGGER.error("set exception fail");
 			return -1;
 		}
 		return pid;
 	}
-	
+
 	public Course getCourseBasic(final int cid) {
-		final StringBuilder sqlBuilder = new StringBuilder(
+		final String sqlString = new String(
 				"SELECT * FROM `courses` where `cid`=?;");
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
@@ -108,11 +106,10 @@ public class StudentDao {
 		if (LOGGER.isDebugEnabled()) {
 			List<Object> params = new ArrayList<Object>();
 			params.add(cid);
-			final String query = QueryUtil.getQuery(params,
-					sqlBuilder.toString());
+			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug(query);
 		}
-		Course course = jdbcTemplate.query(sqlBuilder.toString(), setter,
+		Course course = jdbcTemplate.query(sqlString, setter,
 				new CourseMapper());
 		return course;
 	}
