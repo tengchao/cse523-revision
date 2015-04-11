@@ -41,7 +41,7 @@ public class QueryUtil {
 			values.setLength(values.length() - 2);
 
 			result[0] = keys.toString();
-			result[1] = keys.toString();
+			result[1] = values.toString();
 		}
 		return result;
 	}
