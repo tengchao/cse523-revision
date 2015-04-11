@@ -11,8 +11,7 @@
 		automatically sets up objects annotated with @Controller, @Service etc. -->
 	<context:component-scan base-package="com.tengchao.cse523.dto" />
 
-	<mvc:annotation-driven proxy-target-class="true"
-		transaction-manager="transactionManager" />
+	<mvc:annotation-driven />
 
 	<context:property-placeholder location="classpath:mysql.properties" />
 
