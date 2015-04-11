@@ -17,7 +17,7 @@ CREATE TABLE `cse523_revision`.`people` (
 CREATE TABLE `cse523_revision`.`courses` (
   `cid` INT NOT NULL AUTO_INCREMENT,
   `nickId` VARCHAR(45) NOT NULL,
-  `cname` VARCHAR(45) NOT NULL,
+  `courseName` VARCHAR(45) NOT NULL,
   `semester` VARCHAR(45) NOT NULL,
   `professorId` INT NOT NULL,
   `professorName` VARCHAR(45) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `cse523_revision`.`people_courses` (
   `role` VARCHAR(45) NULL,
   `data` TEXT NULL,
   `nickId` VARCHAR(45) NULL,
-  `cname` VARCHAR(45) NULL,
+  `courseName` VARCHAR(45) NULL,
   `semester` VARCHAR(45) NULL,
   `expectation` VARCHAR(45) NULL,
   `score` DECIMAL NULL,
