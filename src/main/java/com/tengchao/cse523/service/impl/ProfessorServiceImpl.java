@@ -19,7 +19,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 	}
 	
 	@Override
-	public int createCourse(Map<String, String> courseMap,
+	public int createCourse(Map<String, Object> courseMap,
 			String[] requiredParams) throws SQLException {
 		int cid = professorDao.createCourse(courseMap, requiredParams);
 		return cid;

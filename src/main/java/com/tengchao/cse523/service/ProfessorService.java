@@ -7,7 +7,7 @@ import com.tengchao.cse523.dto.Course;
 
 public interface ProfessorService {
 
-	public int createCourse(Map<String, String> courseMap,
+	public int createCourse(Map<String, Object> courseMap,
 			String[] requiredParams) throws SQLException;
 	
 	public Course getCourse(int cid, int pid);

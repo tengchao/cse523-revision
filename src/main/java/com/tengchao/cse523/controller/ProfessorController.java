@@ -49,27 +49,32 @@ public class ProfessorController {
 	 */
 	@RequestMapping(value = "/professor/createCourse", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Integer> createCourse(
+	public ResponseEntity<Map<String, Integer>> createCourse(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestBody String requestPayload) throws SQLException {
 		if (StringUtils.isNullOrEmpty(requestPayload)) {
 			LOGGER.error("request payload is null or empty");
 			throw new BadRequestException("request payload is null or empty");
 		}
-		Map<String, String> jsonMap = JsonUtil.toMap(requestPayload);
-		String[] requiredParams = new String[] { "nickId", "cname",
-				"gradeRange", "percentageFlag", "categoryPercentage" };
-		if (!GeneralUtil.containsAllKeys(jsonMap, requiredParams)) {
-			LOGGER.error("some parameter is missing in the request payload: "
-					+ requestPayload);
+		Map<String, Object> jsonMap = JsonUtil.toMap(requestPayload);
+		Map<String, Integer> response = new HashMap<String, Integer>();
+		String[] requiredParams = new String[] { "nickId", "courseName",
+				"semester", "professorId", "professorName", "gradeRange",
+				"percentageFlag", "categories" };
+		String missingKey = GeneralUtil
+				.containsAllKeys(jsonMap, requiredParams);
+		if (missingKey != null) {
+			LOGGER.error("Parameter " + missingKey
+					+ " is missing in the request payload: " + requestPayload);
 			throw new BadRequestException(
 					"some parameter is missing in the request payload: "
 							+ requestPayload);
 		}
 		HttpStatus responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
 		int cid = professorService.createCourse(jsonMap, requiredParams);
+		response.put("cid", cid);
 		responseCode = HttpStatus.OK;
-		return new ResponseEntity<Integer>(cid, responseCode);
+		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
 	}
 
 	/**
@@ -86,11 +91,12 @@ public class ProfessorController {
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid)
 			throws SQLException {
-		HttpStatus responseCode = HttpStatus.OK;
-		Map<String, Integer> response = new HashMap<String, Integer>();
-		professorService.deleteCourse(cid, pid);
-		response.put("cid", cid);
-		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
+//		HttpStatus responseCode = HttpStatus.OK;
+//		Map<String, Integer> response = new HashMap<String, Integer>();
+//		professorService.deleteCourse(cid, pid);
+//		response.put("cid", cid);
+//		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
+		return null;
 	}
 
 	/**

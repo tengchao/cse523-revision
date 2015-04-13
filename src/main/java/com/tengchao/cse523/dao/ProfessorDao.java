@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.mysql.jdbc.Statement;
 import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.dto.mapper.CourseMapper;
 import com.tengchao.cse523.util.GeneralUtil;
@@ -32,7 +33,7 @@ public class ProfessorDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	public int createCourse(final Map<String, String> courseMap,
+	public int createCourse(final Map<String, Object> courseMap,
 			final String[] requiredParams) throws SQLException {
 		final String sqlString = QueryUtil.constructInsertQuery("courses",
 				requiredParams);
@@ -40,8 +41,8 @@ public class ProfessorDao {
 			List<Object> params = new ArrayList<Object>();
 			for (int i = 0; i < requiredParams.length; i++) {
 				String key = requiredParams[i];
-				String value = courseMap.get(key);
-				params.add(value);
+				Object value = courseMap.get(key);
+				params.add(value.toString());
 			}
 			final String query = QueryUtil.getQuery(params, sqlString);
 			LOGGER.debug("create course: " + query);
@@ -52,11 +53,11 @@ public class ProfessorDao {
 			public PreparedStatement createPreparedStatement(Connection con)
 					throws SQLException {
 				PreparedStatement pst = con.prepareStatement(sqlString,
-						new String[] { "cid" });
+						Statement.RETURN_GENERATED_KEYS);
 				for (int i = 0; i < requiredParams.length; i++) {
 					String key = requiredParams[i];
-					String value = courseMap.get(key);
-					pst.setString(i + 1, value);
+					Object value = courseMap.get(key);
+					pst.setObject(i + 1, value);
 				}
 				return pst;
 			}
@@ -64,7 +65,7 @@ public class ProfessorDao {
 		if (0 == rows) {
 			throw new SQLException("fail to insert new course");
 		}
-		return (int) keyHolder.getKeys().get("cid");
+		return keyHolder.getKey().intValue();
 	}
 
 	public Course getCourseBasic(final int cid, final int pid) {

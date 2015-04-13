@@ -16,7 +16,7 @@ public class CourseMapper implements ResultSetExtractor<Course> {
 			Course course = new Course();
 			course.setCourseId(rs.getInt("cid"));
 			course.setNickId(rs.getString("nickId"));
-			course.setCourseName(rs.getString("cname"));
+			course.setCourseName(rs.getString("courseName"));
 			course.setSemester(rs.getString("semester"));
 			course.setProfessorId(rs.getInt("professorId"));
 			course.setProfessorName(rs.getString("professorName"));
