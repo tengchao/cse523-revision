@@ -57,7 +57,6 @@ public class ProfessorController {
 			throw new BadRequestException("request payload is null or empty");
 		}
 		Map<String, Object> jsonMap = JsonUtil.toMap(requestPayload);
-		Map<String, Integer> response = new HashMap<String, Integer>();
 		String[] requiredParams = new String[] { "nickId", "courseName",
 				"semester", "professorId", "professorName", "gradeRange",
 				"percentageFlag", "categories" };
@@ -70,6 +69,7 @@ public class ProfessorController {
 					"some parameter is missing in the request payload: "
 							+ requestPayload);
 		}
+		Map<String, Integer> response = new HashMap<String, Integer>();
 		HttpStatus responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
 		int cid = professorService.createCourse(jsonMap, requiredParams);
 		response.put("cid", cid);
@@ -91,11 +91,12 @@ public class ProfessorController {
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid)
 			throws SQLException {
-//		HttpStatus responseCode = HttpStatus.OK;
-//		Map<String, Integer> response = new HashMap<String, Integer>();
-//		professorService.deleteCourse(cid, pid);
-//		response.put("cid", cid);
-//		return new ResponseEntity<Map<String, Integer>>(response, responseCode);
+		// HttpStatus responseCode = HttpStatus.OK;
+		// Map<String, Integer> response = new HashMap<String, Integer>();
+		// professorService.deleteCourse(cid, pid);
+		// response.put("cid", cid);
+		// return new ResponseEntity<Map<String, Integer>>(response,
+		// responseCode);
 		return null;
 	}
 
@@ -107,14 +108,37 @@ public class ProfessorController {
 	 * @param requestPayload
 	 *            {section}
 	 * @return {cid, section}
+	 * @throws SQLException
 	 */
 	@RequestMapping(value = "/professor/createSection", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<String> createSection(
+	public ResponseEntity<Map<String, Integer>> createSection(
 			@RequestParam(value = "pid", required = true) int pid,
 			@RequestParam(value = "cid", required = true) int cid,
-			@RequestBody String requestPayload) {
-		return null;
+			@RequestBody String requestPayload) throws SQLException {
+		if (StringUtils.isNullOrEmpty(requestPayload)) {
+			LOGGER.error("request payload is null or empty");
+			throw new BadRequestException("request payload is null or empty");
+		}
+		Map<String, Object> jsonMap = JsonUtil.toMap(requestPayload);
+		String[] requiredParams = new String[] { "nickId", "courseName",
+				"semester", "name", "role" };
+		String missingKey = GeneralUtil
+				.containsAllKeys(jsonMap, requiredParams);
+		if (missingKey != null) {
+			LOGGER.error("Parameter " + missingKey
+					+ " is missing in the request payload: " + requestPayload);
+			throw new BadRequestException(
+					"some parameter is missing in the request payload: "
+							+ requestPayload);
+		}
+		Map<String, Integer> response = new HashMap<String, Integer>();
+		HttpStatus responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+		int section = professorService.createSection(jsonMap, requiredParams,
+				cid, pid);
+		response.put("cid", cid);
+		response.put("section", section);
+		return new ResponseEntity<Map<String,Integer>>(response, responseCode);
 	}
 
 	/**

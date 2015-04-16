@@ -2,6 +2,7 @@ package com.tengchao.cse523.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +15,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.mysql.jdbc.Statement;
 import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.dto.mapper.CourseMapper;
-import com.tengchao.cse523.util.GeneralUtil;
 import com.tengchao.cse523.util.QueryUtil;
 
 public class ProfessorDao {
@@ -62,8 +63,8 @@ public class ProfessorDao {
 				return pst;
 			}
 		}, keyHolder);
-		if (0 == rows) {
-			throw new SQLException("fail to insert new course");
+		if (rows != 1) {
+			throw new SQLException("fail to insert new course: " + rows);
 		}
 		return keyHolder.getKey().intValue();
 	}
@@ -128,6 +129,64 @@ public class ProfessorDao {
 			LOGGER.debug("delete course in table people_courses: " + query);
 		}
 		int rows = jdbcTemplate.update(sqlString, setter);
+		return rows;
+	}
+
+	public List<Integer> sectionListForCourse(final int pid, final int cid) {
+		final String sqlString = new String(
+				"select `section` from `people_courses` where `pid`=? and `cid`=?;");
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, pid);
+				ps.setInt(2, cid);
+			}
+		};
+		if (LOGGER.isDebugEnabled()){
+			List<Object> params = new ArrayList<Object>();
+			params.add(pid);
+			params.add(cid);
+			final String query = QueryUtil.getQuery(params, sqlString);
+			LOGGER.debug("get course section list: " + query);
+		}
+		List<Integer> sections = null;
+		sections = jdbcTemplate.query(sqlString, setter, new RowMapper<Integer>(){
+			@Override
+			public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getInt("section");
+			}
+		});
+		return sections;
+	}
+
+	public int createSection(final Map<String, Object> infoMap,
+			final String[] requiredParams) throws SQLException {
+		final String sqlString = QueryUtil.constructInsertQuery(
+				"people_courses", requiredParams);
+		PreparedStatementSetter setter = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				for (int i = 0; i < requiredParams.length; i++) {
+					String key = requiredParams[i];
+					Object value = infoMap.get(key);
+					ps.setObject(i + 1, value);
+				}
+			}
+		};
+		if (LOGGER.isDebugEnabled()) {
+			List<Object> params = new ArrayList<Object>();
+			for (int i = 0; i < requiredParams.length; i++) {
+				String key = requiredParams[i];
+				Object value = infoMap.get(key);
+				params.add(value.toString());
+			}
+			final String query = QueryUtil.getQuery(params, sqlString);
+			LOGGER.debug("create section: " + query);
+		}
+		int rows = jdbcTemplate.update(sqlString, setter);
+		if (rows != 1){
+			throw new SQLException("fail to insert new course: " + rows);
+		}
 		return rows;
 	}
 
