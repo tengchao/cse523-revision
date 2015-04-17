@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tengchao.cse523.dao.BaseDao;
 import com.tengchao.cse523.dto.Course;
 import com.tengchao.cse523.dto.CourseDashboard;
+import com.tengchao.cse523.dto.CourseMore;
 import com.tengchao.cse523.dto.Person;
 import com.tengchao.cse523.dto.PersonCourseRelation;
 import com.tengchao.cse523.exception.DataNotFoundException;
@@ -55,25 +56,30 @@ public class BaseServiceImpl implements BaseService {
 				.getCoursesForPersonSemester(pid, semester);
 		CourseDashboard dashboard = new CourseDashboard();
 		dashboard.setSemester(semester);
-		Set<Integer> cidSet = new HashSet<Integer>();
-		List<Course> courses = new ArrayList<Course>();
-		Map<Integer, String> roleMap = new HashMap<Integer, String>();
-		for (PersonCourseRelation relation : relations) {
+		Map<Integer, CourseMore> courseMap = new HashMap<Integer, CourseMore>();
+		for (PersonCourseRelation relation : relations){
 			int cid = relation.getCid();
-			if (cidSet.contains(cid)) {
-				continue;
+			CourseMore courseSpecialized = null;
+			if (!courseMap.containsKey(cid)){
+				courseSpecialized = new CourseMore();
+				courseSpecialized.setCid(cid);
+				courseSpecialized.setNickId(relation.getNickId());
+				courseSpecialized.setCourseName(relation.getCourseName());
+				courseSpecialized.setRole(relation.getRole());
+			} else {
+				courseSpecialized = courseMap.get(cid);
 			}
-			Course course = new Course();
-			course.setCourseId(cid);
-			course.setNickId(relation.getNickId());
-			course.setCourseName(relation.getCname());
-			courses.add(course);
-			roleMap.put(cid, relation.getRole());
-			cidSet.add(course.getCourseId());
-			LOGGER.debug("fetch course: " + course);
+			courseSpecialized.addSection(relation.getSection());
+			courseMap.put(cid, courseSpecialized);
+		}
+		List<CourseMore> courses = new ArrayList<CourseMore>();
+		courses.addAll(courseMap.values());
+		if (LOGGER.isDebugEnabled()){
+			for (CourseMore course : courses){
+				LOGGER.debug("fetch course info for this person: " + course);
+			}
 		}
 		dashboard.setCourses(courses);
-		dashboard.setRoleMap(roleMap);
 		return dashboard;
 	}
 }

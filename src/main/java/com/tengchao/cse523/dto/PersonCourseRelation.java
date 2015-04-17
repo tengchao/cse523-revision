@@ -9,7 +9,7 @@ public class PersonCourseRelation implements Serializable {
 	private int section;
 	private String role;
 	private String nickId;
-	private String cname;
+	private String courseName;
 
 	public int getPid() {
 		return pid;
@@ -51,12 +51,14 @@ public class PersonCourseRelation implements Serializable {
 		this.nickId = nickId;
 	}
 
-	public String getCname() {
-		return cname;
+	public String getCourseName() {
+		return courseName;
 	}
 
-	public void setCname(String cname) {
-		this.cname = cname;
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
 	}
+
+
 
 }

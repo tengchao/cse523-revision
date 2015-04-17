@@ -19,7 +19,7 @@ public class PersonCourseRelationRowMapper implements
 		relation.setSection(rs.getInt("section"));
 		relation.setRole(rs.getString("role"));
 		relation.setNickId(rs.getString("nickId"));
-		relation.setCname(rs.getString("cname"));
+		relation.setCourseName(rs.getString("courseName"));
 		return relation;
 	}
 

@@ -7,8 +7,7 @@ import java.util.Map;
 public class CourseDashboard implements Serializable {
 
 	private String semester;
-	private List<Course> courses;
-	private Map<Integer, String> roleMap;
+	private List<CourseMore> courses;
 
 	public String getSemester() {
 		return semester;
@@ -18,20 +17,11 @@ public class CourseDashboard implements Serializable {
 		this.semester = semester;
 	}
 
-	public List<Course> getCourses() {
+	public List<CourseMore> getCourses() {
 		return courses;
 	}
 
-	public void setCourses(List<Course> courses) {
+	public void setCourses(List<CourseMore> courses) {
 		this.courses = courses;
-	}
-
-	public Map<Integer, String> getRoleMap() {
-		return roleMap;
-	}
-
-	public void setRoleMap(Map<Integer, String> roleMap) {
-		this.roleMap = roleMap;
-	}
-
+	}	
 }

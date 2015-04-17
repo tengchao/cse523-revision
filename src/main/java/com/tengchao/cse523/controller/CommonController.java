@@ -112,8 +112,6 @@ public class CommonController {
 	 * @param pid
 	 * @return
 	 */
-	// to be modified
-	/*
 	@RequestMapping(value = "/courses/{semester}/dashboard", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<CourseDashboard> getSemesterCourses(
@@ -128,5 +126,5 @@ public class CommonController {
 		}
 		return new ResponseEntity<CourseDashboard>(dashboard, responseCode);
 	}
-	*/
+	
 }
